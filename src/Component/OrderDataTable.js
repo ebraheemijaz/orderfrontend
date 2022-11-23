@@ -33,14 +33,11 @@ const OrderTable = function OrderDataTable() {
 
     useEffect(() => {
         fetchData()
+        // eslint-disable-next-line 
     }, [])
     const [filters1, setFilters1] = useState({
         'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
-
-    const filtersMap = {
-        'filters1': { value: filters1, callback: setFilters1 },
-    };
 
     const handleQuerySearch = async () => {
         if (query.startingRange >= query.endingRange) {
@@ -59,11 +56,7 @@ const OrderTable = function OrderDataTable() {
         setLoaing(false)
     }
 
-    const renderHeader = (filtersKey) => {
-        const filters = filtersMap[`${filtersKey}`].value;
-        const value = filters['global'] ? filters['global'].value : '';
-
-
+    const renderHeader = () => {
         return (
             <span>
                 <InputText type="number" value={query.startingRange} onChange={(e) => setQuery({ ...query, startingRange: e.target.value })} placeholder="Starting Range" style={{ marginLeft: 5 }} />

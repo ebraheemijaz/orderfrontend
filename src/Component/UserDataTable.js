@@ -25,6 +25,7 @@ export default function UserDataTable() {
 
     useEffect(() => {
         fetchData()
+        // eslint-disable-next-line 
     }, [])
     const [filters1, setFilters1] = useState({
         'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
