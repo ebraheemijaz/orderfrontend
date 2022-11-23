@@ -63,7 +63,7 @@ export default function SellerDataTable() {
             <h5>Seller</h5>
             <DataTable value={customers.data} paginator rows={10} header={header1} filters={filters1} onFilter={(e) => setFilters1(e.filters)}
                 dataKey="id" responsiveLayout="scroll"
-                stateStorage="session" stateKey="dt-state-demo-session" emptyMessage="No customers found.">
+                stateStorage="session" stateKey="dt-state-demo-session" emptyMessage="No sellers found.">
                 <Column field="id" header="Id" ></Column>
                 <Column header="Name" body={(row) => (<p>{row.attributes.name}</p>)} ></Column>
                 <Column header="Phone" body={(row) => (<p>{row.attributes.phone}</p>)} ></Column>
