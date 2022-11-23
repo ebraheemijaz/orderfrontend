@@ -62,7 +62,7 @@ export default function UserDataTable() {
             <h5>User</h5>
             <DataTable value={customers} paginator rows={10} header={header1} filters={filters1} onFilter={(e) => setFilters1(e.filters)}
                 dataKey="id" responsiveLayout="scroll"
-                stateStorage="session" stateKey="dt-state-demo-session" emptyMessage="No customers found.">
+                stateStorage="session" stateKey="dt-state-demo-session" emptyMessage="No users found.">
                 <Column field="id" header="Id" ></Column>
                 <Column field="fullname" header="Fullname" ></Column>
                 <Column field="username" header="Username" ></Column>
