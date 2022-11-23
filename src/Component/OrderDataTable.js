@@ -84,7 +84,7 @@ const OrderTable = function OrderDataTable() {
                 <Column header="Amount" body={(row) => (<p>{row.attributes.amount}</p>)} ></Column>
                 <Column header="Recepit" body={(row) => (<p>{row.attributes.receipt}</p>)} ></Column>
                 <Column header="DeliveryTo" body={(row) => (<p>{row.attributes.deliveryto}</p>)} ></Column>
-                <Column header="Seller" body={(row) => (<p>{row.attributes.seller?.data.attributes?.name}</p>)} ></Column>
+                <Column header="Seller" body={(row) => (<p>{row.attributes.seller?.data?.attributes?.name}</p>)} ></Column>
             </DataTable>
         </div>
     );
