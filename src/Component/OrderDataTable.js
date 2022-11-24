@@ -95,7 +95,7 @@ const OrderTable = function OrderDataTable() {
                     <Column header="Seller" body={(row) => (<p>{row.attributes.seller?.data?.attributes?.name}</p>)} ></Column>
                     <Column header="Details" body={(row) => (
                         // eslint-disable-next-line
-                        <a href="" onClick={() => handleDetail(row)}>View Detail</a>
+                        <a href="#" onClick={() => handleDetail(row)}>View Detail</a>
                     )}></Column>
                 </DataTable>
                 <br />
