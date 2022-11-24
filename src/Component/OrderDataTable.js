@@ -9,10 +9,13 @@ import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
+import { Dialog } from 'primereact/dialog';
 
 const OrderTable = function OrderDataTable() {
     const { user } = useContext(AuthContext);
     const [customers, setCustomers] = useState([]);
+    const [sellersTotal, setSellersTotal] = useState(null);
+    const [detail, setDetail] = useState(null);
     const [loaidng, setLoaing] = useState(false);
     const [query, setQuery] = useState({
         startingRange: 0,
@@ -40,6 +43,7 @@ const OrderTable = function OrderDataTable() {
     });
 
     const handleQuerySearch = async () => {
+        setSellersTotal(null)
         if (query.startingRange >= query.endingRange) {
             toast.current.show({ severity: 'error', summary: 'Invalid Range', detail: 'Ending range should be greater than starting range' });
             return
@@ -52,6 +56,7 @@ const OrderTable = function OrderDataTable() {
                 }
             });
             setCustomers(data ?? { data: [], meta: {} })
+            setSellersTotal(data.sellers_amount)
         }
         setLoaing(false)
     }
@@ -65,28 +70,61 @@ const OrderTable = function OrderDataTable() {
             </span>
         );
     }
-
+    const handleDetail = (row) => {
+        setDetail(row.attributes?.productlist ?? [])
+    }
     const header1 = renderHeader('filters1');
 
     return (
-        <div className="card">
+        <>
             <Toast ref={toast} />
-            <h5>Order</h5>
-            <DataTable value={customers.data}
-                loading={loaidng}
-                paginator rows={10} header={header1} filters={filters1} onFilter={(e) => setFilters1(e.filters)}
-                dataKey="id" responsiveLayout="scroll"
-                stateStorage="session" stateKey="dt-state-demo-session" emptyMessage="No orders found.">
-                <Column field="id" header="Id" ></Column>
-                <Column header="Buyer" body={(row) => (<p>{row.attributes.buyer}</p>)} ></Column>
-                <Column header="BuyersPhone" body={(row) => (<p>{row.attributes.buyerphone}</p>)} ></Column>
-                <Column header="BuyerEmail" body={(row) => (<p>{row.attributes.buyeremail}</p>)} ></Column>
-                <Column header="Amount" body={(row) => (<p>{row.attributes.amount}</p>)} ></Column>
-                <Column header="Recepit" body={(row) => (<p>{row.attributes.receipt}</p>)} ></Column>
-                <Column header="DeliveryTo" body={(row) => (<p>{row.attributes.deliveryto}</p>)} ></Column>
-                <Column header="Seller" body={(row) => (<p>{row.attributes.seller?.data?.attributes?.name}</p>)} ></Column>
-            </DataTable>
-        </div>
+            <div className="card">
+                <h5>Order</h5>
+                <DataTable value={customers.data}
+                    loading={loaidng}
+                    paginator rows={10} header={header1} filters={filters1} onFilter={(e) => setFilters1(e.filters)}
+                    dataKey="id" responsiveLayout="scroll"
+                    stateStorage="session" stateKey="dt-state-demo-session" emptyMessage="No orders found.">
+                    <Column field="id" header="Id" ></Column>
+                    <Column header="Buyer" body={(row) => (<p>{row.attributes.buyer}</p>)} ></Column>
+                    <Column header="BuyersPhone" body={(row) => (<p>{row.attributes.buyerphone}</p>)} ></Column>
+                    <Column header="BuyerEmail" body={(row) => (<p>{row.attributes.buyeremail}</p>)} ></Column>
+                    <Column header="Amount" body={(row) => (<p>{row.attributes.amount}</p>)} ></Column>
+                    <Column header="Recepit" body={(row) => (<p>{row.attributes.receipt}</p>)} ></Column>
+                    <Column header="DeliveryTo" body={(row) => (<p>{row.attributes.deliveryto}</p>)} ></Column>
+                    <Column header="Seller" body={(row) => (<p>{row.attributes.seller?.data?.attributes?.name}</p>)} ></Column>
+                    <Column header="Details" body={(row) => (<a href="#" onClick={() => handleDetail(row)}>View Detail</a>)} ></Column>
+                </DataTable>
+                <br />
+                <hr />
+                {sellersTotal && (
+                    <>
+                        <h5>Seller Total Amount</h5>
+                        <DataTable value={sellersTotal}
+                            loading={loaidng}
+                            paginator rows={10} filters={filters1} onFilter={(e) => setFilters1(e.filters)}
+                            dataKey="id" responsiveLayout="scroll"
+                            stateStorage="session" stateKey="dt-state-demo-session" emptyMessage="No orders found.">
+                            <Column field="seller_id" header="Id" ></Column>
+                            <Column field="name" header="Name" ></Column>
+                            <Column field="sum(amount)" header="Total" ></Column>
+                        </DataTable>
+                    </>
+                )}
+            </div>
+
+            <Dialog visible={detail !== null} onHide={() => setDetail(null)} breakpoints={{ '960px': '75vw', '640px': '100vw' }} style={{ width: '50vw' }}>
+                <DataTable value={detail}
+                    paginator rows={10} filters={filters1} onFilter={(e) => setFilters1(e.filters)}
+                    dataKey="id" responsiveLayout="scroll"
+                    stateStorage="session" stateKey="dt-state-demo-session" emptyMessage="No product found.">
+                    <Column field="amount" header="Amount" ></Column>
+                    <Column field="productname" header="Productname" ></Column>
+                    <Column field="productocode" header="Productocode" ></Column>
+                    <Column field="unit" header="Unit" ></Column>
+                </DataTable>
+            </Dialog>
+        </>
     );
 }
 
