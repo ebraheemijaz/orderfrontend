@@ -50,7 +50,7 @@ const OrderTable = function OrderDataTable() {
         }
         setLoaing(true)
         if (user.jwt) {
-            const { data } = await axios.get(`${baseURL}/api/orders?populate=*&&filters[id][$gte][0]=${query.startingRange}&filters[id][$lte][1]=${query.endingRange}`, {
+            const { data } = await axios.get(`${baseURL}/api/orders?populate=*&filters[id][$gte][0]=${query.startingRange}&filters[id][$lte][1]=${query.endingRange}`, {
                 headers: {
                     'Authorization': 'Bearer ' + user.jwt
                 }
