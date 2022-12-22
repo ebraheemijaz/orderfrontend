@@ -39,7 +39,7 @@ export default function Login() {
 
     useEffect(() => {
         if (user.jwt) {
-            navigate("/");
+            navigate("/report");
         }
         // eslint-disable-next-line 
     }, [user])

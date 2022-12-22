@@ -44,13 +44,17 @@ const OrderTable = function OrderDataTable() {
 
     const handleQuerySearch = async () => {
         setSellersTotal(null)
-        if (query.startingRange >= query.endingRange) {
-            toast.current.show({ severity: 'error', summary: 'Invalid Range', detail: 'Ending range should be greater than starting range' });
-            return
-        }
+        let url = `${baseURL}/api/orders?populate=*`
+        console.log({ query })
+        if (query.startingRange !== '') url += `&filters[id][$gte][0]=${query.startingRange}`
+        if (query.endingRange !== '') url += `&filters[id][$lte][1]=${query.endingRange}`
+        // if (query.startingRange >= query.endingRange) {
+        //     toast.current.show({ severity: 'error', summary: 'Invalid Range', detail: 'Ending range should be greater than starting range' });
+        //     return
+        // }
         setLoaing(true)
         if (user.jwt) {
-            const { data } = await axios.get(`${baseURL}/api/orders?populate=*&filters[id][$gte][0]=${query.startingRange}&filters[id][$lte][1]=${query.endingRange}`, {
+            const { data } = await axios.get(url, {
                 headers: {
                     'Authorization': 'Bearer ' + user.jwt
                 }
