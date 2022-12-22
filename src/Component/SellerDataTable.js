@@ -20,7 +20,7 @@ export default function SellerDataTable() {
                     'Authorization': 'Bearer ' + user.jwt
                 }
             });
-            setCustomers(data ?? { data: [], meta: {} })
+            setCustomers(data?.data?.map(e=> ({...e.attributes, id:e.id})) || [])
         }
     }
 
@@ -61,14 +61,14 @@ export default function SellerDataTable() {
     return (
         <div className="card">
             <h5>Seller</h5>
-            <DataTable value={customers.data} paginator rows={10} header={header1} filters={filters1} onFilter={(e) => setFilters1(e.filters)}
+            <DataTable value={customers} paginator rows={10} header={header1} filters={filters1} onFilter={(e) => setFilters1(e.filters)}
                 dataKey="id" responsiveLayout="scroll"
                 stateStorage="session" stateKey="dt-state-demo-session" emptyMessage="No sellers found.">
                 <Column field="id" header="Id" ></Column>
-                <Column header="Name" body={(row) => (<p>{row.attributes.name}</p>)} ></Column>
-                <Column header="Phone" body={(row) => (<p>{row.attributes.phone}</p>)} ></Column>
-                <Column header="Email" body={(row) => (<p>{row.attributes.email}</p>)} ></Column>
-                <Column header="Arpicode" body={(row) => (<p>{row.attributes.arpicode}</p>)} ></Column>
+                <Column field="name" header="Name" ></Column>
+                <Column field="phone" header="Phone" ></Column>
+                <Column field="email" header="Email" ></Column>
+                <Column field="arpicode" header="Arpicode" ></Column>
             </DataTable>
         </div>
     );
