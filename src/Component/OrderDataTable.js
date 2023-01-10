@@ -21,11 +21,12 @@ const OrderTable = function OrderDataTable() {
         startingRange: 0,
         endingRange: 0
     });
+    const [first, setFirst] = useState(0);
     const toast = useRef()
 
-    const fetchData = async () => {
+    const fetchData = async (page = 1) => {
         if (user.jwt) {
-            const { data } = await axios.get(`${baseURL}/api/orders?populate=*`, {
+            const { data } = await axios.get(`${baseURL}/api/orders?populate=*&pagination[page]=${page}&pagination[pageSize]=10`, {
                 headers: {
                     'Authorization': 'Bearer ' + user.jwt
                 }
@@ -75,16 +76,28 @@ const OrderTable = function OrderDataTable() {
         );
     }
     const handleDetail = (row) => {
-        setDetail(row.attributes?.productlist ?? [])
+        setDetail(row.attributes?.productlist ? JSON.parse(row.attributes?.productlist) : [])
     }
     const header1 = renderHeader('filters1');
+
+    const onPage = async (event) => {
+        setLoaing(true);
+        const startIndex = event.first;
+        setFirst(startIndex);
+        await fetchData(event.page + 1)
+        setLoaing(false);
+    }
 
     return (
         <>
             <Toast ref={toast} />
             <div className="card">
                 <h5>Order</h5>
-                <DataTable value={customers.data}
+                <DataTable
+                    totalRecords={customers?.meta?.pagination?.total || 0}
+                    lazy onPage={onPage}
+                    first={first}
+                    value={customers.data}
                     loading={loaidng}
                     paginator rows={10} header={header1} filters={filters1} onFilter={(e) => setFilters1(e.filters)}
                     dataKey="id" responsiveLayout="scroll"

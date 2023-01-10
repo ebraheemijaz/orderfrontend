@@ -9,18 +9,19 @@ import axios from 'axios';
 import { baseURL } from '../utils';
 
 export default function SellerDataTable() {
-
-
+    const [first, setFirst] = useState(0);
+    const [loaidng, setLoaing] = useState(false);
     const { user } = useContext(AuthContext);
     const [customers, setCustomers] = useState([]);
-    const fetchData = async () => {
+    const fetchData = async (page = 1) => {
         if (user.jwt) {
-            const { data } = await axios.get(`${baseURL}/api/sellers?populate=*`, {
+            const { data } = await axios.get(`${baseURL}/api/sellers?populate=*&pagination[page]=${page}&pagination[pageSize]=10`, {
                 headers: {
                     'Authorization': 'Bearer ' + user.jwt
                 }
             });
-            setCustomers(data?.data?.map(e=> ({...e.attributes, id:e.id})) || [])
+            // setCustomers(data?.data?.map(e=> ({...e.attributes, id:e.id})) || [])
+            setCustomers(data ?? { data: [], meta: {} })
         }
     }
 
@@ -57,11 +58,23 @@ export default function SellerDataTable() {
     }
 
     const header1 = renderHeader('filters1');
-
+    const onPage = async (event) => {
+        setLoaing(true);
+        const startIndex = event.first;
+        setFirst(startIndex);
+        await fetchData(event.page + 1)
+        setLoaing(false);
+    }
     return (
         <div className="card">
             <h5>Seller</h5>
-            <DataTable value={customers} paginator rows={10} header={header1} filters={filters1} onFilter={(e) => setFilters1(e.filters)}
+            <DataTable
+                totalRecords={customers?.meta?.pagination?.total || 0}
+                lazy onPage={onPage}
+                first={first}
+                value={customers?.data?.map(e => ({ ...e.attributes, id: e.id }))}
+                loading={loaidng}
+                paginator rows={10} header={header1} filters={filters1} onFilter={(e) => setFilters1(e.filters)}
                 dataKey="id" responsiveLayout="scroll"
                 stateStorage="session" stateKey="dt-state-demo-session" emptyMessage="No sellers found.">
                 <Column field="id" header="Id" ></Column>
